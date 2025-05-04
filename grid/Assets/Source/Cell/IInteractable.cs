@@ -2,8 +2,9 @@ using UnityEngine;
 
 namespace Source.Cell
 {
-    public class IInteractable : MonoBehaviour
+    public interface IInteractable
     {
-        
+        void Mark();
+        void Unmark();
     }
 }

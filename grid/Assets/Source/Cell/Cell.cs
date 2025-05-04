@@ -1,18 +1,25 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
-public class Cell : MonoBehaviour
+namespace Source.Cell
 {
-    // Start is called before the first frame update
-    void Start()
+    public class Cell : MonoBehaviour
     {
+        public class Factory : PlaceholderFactory<Cell>{}
         
-    }
+        public bool IsMarked  = false;
+        
+        public void Mark()
+        {
+            if (IsMarked) return;
+            // markInstance = Instantiate(crossPrefab, transform.position, Quaternion.identity, transform);
+            IsMarked = true;
+        }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        public void Unmark()
+        {
+            if (!IsMarked) return;
+            IsMarked = false;
+        }
     }
 }
