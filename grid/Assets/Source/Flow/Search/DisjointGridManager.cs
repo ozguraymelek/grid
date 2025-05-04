@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Cell_ = Source.Cell.Cell;
 namespace Source.Flow.Search
@@ -33,12 +34,19 @@ namespace Source.Flow.Search
                     }
                 }
 
-                // Silme şartı kontrolü
+                // Silinecekleri topla
                 if (GetSize(cell) >= 3)
                 {
+                    var toRemove = new List<Cell_>();
                     foreach (var c in GetAllInSameSet(cell))
                     {
-                        // c.RemoveMarker();
+                        toRemove.Add(c);
+                    }
+
+                    // Liste üzerinden sil → Artık Collection Modified hatası OLMAZ
+                    foreach (var c in toRemove)
+                    {
+                        c.RemoveMarker();
                         Remove(c);
                     }
                 }
@@ -90,10 +98,14 @@ namespace Source.Flow.Search
         public IEnumerable<Cell_> GetAllInSameSet(Cell_ cell)
         {
             var root = Find(cell);
-            foreach (var kvp in parent)
+            var keys = parent.Keys.ToList();
+
+            foreach (var key in keys)
             {
-                if (Find(kvp.Key) == root)
-                    yield return kvp.Key;
+                if (Find(key) == root)
+                {
+                    yield return key;
+                }
             }
         }
     }

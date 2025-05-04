@@ -1,3 +1,4 @@
+using Source.Flow.Search;
 using Source.Grid;
 using Source.GUI;
 using Source.Infrastructure.Pool;
@@ -38,6 +39,8 @@ namespace Source.Infrastructure.Installers
                 .FromComponentInHierarchy()
                 .AsSingle()
                 .NonLazy();
+
+            Container.Bind<DisjointGridManager>().AsSingle().NonLazy();
         }
     }
 }

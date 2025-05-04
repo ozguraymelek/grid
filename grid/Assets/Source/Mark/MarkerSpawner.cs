@@ -9,6 +9,7 @@ namespace Source.Mark
     public class MarkerSpawner : MonoBehaviour
     {
         [SerializeField] private Marker markerPrefab;
+        public Marker ActiveMarker;
 
         [Inject]
         public void Construct()

@@ -1,5 +1,6 @@
 using Source.Core.Utils;
 using Source.Infrastructure.Pool;
+using Source.Mark;
 using UnityEngine;
 using Zenject;
 
@@ -21,6 +22,12 @@ namespace Source.Cell
                 return hit.GetComponent<Cell>();
             }
             return null;
+        }
+        
+        public void RemoveMarker()
+        {
+            ObjectPool<Marker>.Enqueue(transform.GetChild(0).GetComponent<Marker>(), "Marker");
+            IsMarked = false;
         }
     }
 }
