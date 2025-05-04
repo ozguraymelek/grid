@@ -1,34 +1,29 @@
 using System;
+using Source.Cell;
+using Source.Core.Utils;
+using Source.Infrastructure.Pool;
 using UnityEngine;
 using Zenject;
 
 namespace Source.Mark
 {
-    public class Marker : MonoBehaviour, IPoolable<Vector2, Marker.Pool>, IDisposable
+    public class Marker : MonoBehaviour, IInteractable
     {
-        public class Pool : MonoMemoryPool<Vector2, Marker>
+        public void Mark(Cell.Cell cell, Marker marker)
         {
+            if (cell.IsMarked)
+            {
+                return;
+            }
             
-        }
-        
-        private Pool _pool;
-        
-        public void OnDespawned()
-        {
-            gameObject.SetActive(false);
+            cell.IsMarked = true;
         }
 
-        public void OnSpawned(Vector2 pos, Pool pool)
+        public void Unmark(Cell.Cell cell, Marker marker)
         {
-            _pool = pool;
-            // gameObject.SetActive(true);
-            transform.localPosition = pos;
-            Debug.Log(transform.localPosition);
-        }
-
-        public void Dispose()
-        {
-            _pool.Despawn(this);
+            if (!cell.IsMarked) return;
+            ObjectPool<Marker>.Enqueue(marker, "Marker");
+            cell.IsMarked = false;
         }
     }
 }

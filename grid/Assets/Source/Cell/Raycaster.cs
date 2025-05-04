@@ -1,38 +1,53 @@
 using System;
 using Source.Core.Utils;
+using Source.Infrastructure.Pool;
 using Source.Mark;
 using UnityEngine;
 using Zenject;
 
 namespace Source.Cell
 {
-    public class Raycaster : MonoBehaviour, IInteractable
+    public enum Stage
     {
-        private Marker.Pool _pool;
+        Dequeue,
+        Enqueue
+    }
+    public class Raycaster : MonoBehaviour
+    {
+        private MarkerSpawner _markerSpawner;
+        
+        public Marker ActiveMarker;
         
         [Inject]
-        public void Construct(Marker.Pool pool)
+        public void Construct(MarkerSpawner markerSpawner)
         {
-            _pool = pool;
+            _markerSpawner = markerSpawner;
 
             SLog.InjectionStatus(this,
-                (nameof(_pool), _pool));
+                (nameof(_markerSpawner), _markerSpawner)
+            );
         }
         
         private void OnMouseDown()
         {
-            Debug.Log("OnMouseDown");
-            _pool.Spawn(Input.mousePosition);
+            if (GetComponent<Cell>().IsMarked == false)
+            {
+                ActiveMarker = ObjectPool<Marker>.Dequeue("Marker");
+                ActiveMarker.Mark(GetComponent<Cell>(), ActiveMarker);
+                Settings(Stage.Dequeue);
+                return;
+            }
+            
+            ActiveMarker.Unmark(GetComponent<Cell>(), ActiveMarker);
+            Settings(Stage.Enqueue);
         }
 
-        public void Mark()
+        private void Settings(Stage stage = Stage.Dequeue)
         {
-            
-        }
-
-        public void Unmark()
-        {
-            
+            ActiveMarker.transform.SetParent(stage == Stage.Dequeue ? transform : _markerSpawner.transform
+                , false);
+            ActiveMarker.gameObject.SetActive(stage == Stage.Dequeue);
+            ActiveMarker.transform.localPosition = Vector3.zero;
         }
     }
 }

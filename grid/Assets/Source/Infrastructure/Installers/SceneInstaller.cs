@@ -1,5 +1,6 @@
 using Source.Grid;
 using Source.GUI;
+using Source.Infrastructure.Pool;
 using Source.Mark;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -31,11 +32,12 @@ namespace Source.Infrastructure.Installers
                 .FromComponentInHierarchy()
                 .AsSingle()
                 .NonLazy();
-
-            Container.BindMemoryPool<Marker, Marker.Pool>().WithInitialSize(10)
-                .FromComponentInNewPrefab(markerPrefab)
-                .UnderTransformGroup("Markers")
-                .AsSingle();
+            
+            Container
+                .Bind<MarkerSpawner>()
+                .FromComponentInHierarchy()
+                .AsSingle()
+                .NonLazy();
         }
     }
 }

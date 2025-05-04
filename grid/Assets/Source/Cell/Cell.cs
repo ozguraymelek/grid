@@ -1,3 +1,5 @@
+using Source.Core.Utils;
+using Source.Infrastructure.Pool;
 using UnityEngine;
 using Zenject;
 
@@ -8,18 +10,17 @@ namespace Source.Cell
         public class Factory : PlaceholderFactory<Cell>{}
         
         public bool IsMarked  = false;
-        
-        public void Mark()
-        {
-            if (IsMarked) return;
-            // markInstance = Instantiate(crossPrefab, transform.position, Quaternion.identity, transform);
-            IsMarked = true;
-        }
 
-        public void Unmark()
+        // 4 yöne komşuyu getir
+        public Cell GetNeighbor(Vector2Int dir)
         {
-            if (!IsMarked) return;
-            IsMarked = false;
+            var neighborPos = transform.position + new Vector3(dir.x, dir.y, 0);
+            var hit = Physics2D.OverlapPoint(neighborPos);
+            if (hit != null)
+            {
+                return hit.GetComponent<Cell>();
+            }
+            return null;
         }
     }
 }
