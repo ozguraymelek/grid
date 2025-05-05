@@ -567,7 +567,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3866bf74851d4be44bc7989ee4620251, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  config: {fileID: 11400000, guid: d01f0d648a1ea2c49a802994732a903a, type: 2}
   cellPrefab: {fileID: -2776360524932676048, guid: 0768a8575ad1fe44b8f7b3f12111dba4, type: 3}
   markerPrefab: {fileID: -8288697899111149868, guid: 1bac454c0184d3d45b6054dafe32c178, type: 3}
   grid: {fileID: 1751026689}

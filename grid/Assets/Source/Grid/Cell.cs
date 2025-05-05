@@ -1,3 +1,4 @@
+using System;
 using Source.Core.Utils;
 using Source.Interfaces;
 using UnityEngine;
@@ -10,6 +11,16 @@ namespace Source.Grid
     {
         public class Factory : PlaceholderFactory<Cell> { }
         
+        public Vector2Int GridPosition => _gridPos;
+        
+        public bool IsMarked => _isMarked;
+        
+        private Vector2Int _gridPos;
+        private IMarkerService _markerService;
+        private IClustering _clustering;
+        private bool _isMarked;
+        private float _cellSize;
+        
         public Vector2Int[] Neighbors => new[]
         {
             Vector2Int.up,
@@ -18,22 +29,23 @@ namespace Source.Grid
             Vector2Int.right
         };
         
-        private Vector2Int _gridPos;
-        private IMarkerService _markerService;
-        private IClustering _clustering;
-        private bool _isMarked;
-        private float _cellSize;
+        private SpriteRenderer _spriteRenderer;
 
         [Inject]
         public void Construct(IMarkerService markerService, IClustering clustering)
         {
             _markerService = markerService;
             _clustering = clustering;
-
+    
             SLog.InjectionStatus(this,
                 (nameof(_markerService), _markerService),
                 (nameof(_clustering), _clustering)
             );
+        }
+
+        private void Awake()
+        {
+            _spriteRenderer = GetComponent<SpriteRenderer>();
         }
 
         public void Initialize(Vector2Int gridPos, Vector2 worldPos, float scale)
@@ -51,11 +63,18 @@ namespace Source.Grid
             else
                 _markerService.RemoveMarker(this);
         }
-        
-        public Vector2Int GridPosition => _gridPos;
-        
-        public bool IsMarked => _isMarked;
-        
+
+        private void OnMouseEnter()
+        {
+            _spriteRenderer.color = new Color32(185, 185, 155, 255);
+        }
+
+        private void OnMouseExit()
+        {
+            
+            _spriteRenderer.color = Color.white;
+        }
+
         public void SetMarked(bool marked) => _isMarked = marked;
     }
 }

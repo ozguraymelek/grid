@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: GridConfig
   m_EditorClassIdentifier: 
   Size: 5
-  MaxSizeDigit: 2
+  MaxSizeDigit: 3
   sizeDigit: 1
