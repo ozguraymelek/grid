@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
+using Source.Cell;
 using UnityEngine;
 using Cell_ = Source.Cell.Cell;
+
 namespace Source.Flow.Search
 {
     public class DisjointGridManager
@@ -19,21 +21,20 @@ namespace Source.Flow.Search
 
         public void Add(Cell_ cell)
         {
-            if (!parent.ContainsKey(cell))
+            if (parent.TryAdd(cell, cell))
             {
-                parent[cell] = cell;
                 size[cell] = 1;
 
                 // Komşularla birleş
                 foreach (var dir in directions)
                 {
-                    Cell_ neighbor = cell.GetNeighbor(dir);
+                    var neighbor = cell.GetNeighbor(dir);
                     if (neighbor != null && neighbor.IsMarked)
                     {
                         Union(cell, neighbor);
                     }
                 }
-
+                Debug.Log($" size: {GetSize(cell)}");
                 // Silinecekleri topla
                 if (GetSize(cell) >= 3)
                 {
@@ -50,6 +51,9 @@ namespace Source.Flow.Search
                         Remove(c);
                     }
                 }
+                
+                // Debug.Log($"parent: {parent.Count}");
+                // Debug.Log($"size: {size.Count}");
             }
         }
 

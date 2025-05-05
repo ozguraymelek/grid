@@ -1,15 +1,13 @@
-using System;
 using Source.Cell;
-using Source.Core.Utils;
 using Source.Infrastructure.Pool;
 using UnityEngine;
-using Zenject;
+using Cell_ = Source.Cell.Cell;
 
 namespace Source.Mark
 {
     public class Marker : MonoBehaviour, IInteractable
     {
-        public void Mark(Cell.Cell cell, Marker marker)
+        public void Mark(Cell_ cell, Marker marker)
         {
             if (cell.IsMarked)
             {
@@ -19,7 +17,7 @@ namespace Source.Mark
             cell.IsMarked = true;
         }
 
-        public void Unmark(Cell.Cell cell, Marker marker)
+        public void Unmark(Cell_ cell, Marker marker)
         {
             if (!cell.IsMarked) return;
             ObjectPool<Marker>.Enqueue(marker, "Marker");

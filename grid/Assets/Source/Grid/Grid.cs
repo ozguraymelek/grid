@@ -5,13 +5,14 @@ using Source.Core.Utils;
 using Source.Data;
 using UnityEngine;
 using Zenject;
+using Cell_ = Source.Cell.Cell;
 
 namespace Source.Grid
 {
     public class Grid : MonoBehaviour, IBuilder
     {
-        private Cell.Cell.Factory _cellFactory;
-        private Cell.Cell[,] _cells;
+        private Cell_.Factory _cellFactory;
+        private Cell_[,] _cells;
         
         [SerializeField] private GridConfig gridConfig;
         [SerializeField] private float paddingFactor;    
@@ -19,7 +20,7 @@ namespace Source.Grid
         private Camera _cam;
         
         [Inject]
-        public void Construct(Cell.Cell.Factory cellFactory)
+        public void Construct(Cell_.Factory cellFactory)
         {
             _cellFactory = cellFactory;
             
@@ -45,7 +46,7 @@ namespace Source.Grid
 
         public void Generate()
         {
-            _cells = new Cell.Cell[gridConfig.Size, gridConfig.Size];
+            _cells = new Cell_[gridConfig.Size, gridConfig.Size];
             
             Clear();
             

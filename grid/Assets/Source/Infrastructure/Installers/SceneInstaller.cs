@@ -1,11 +1,10 @@
 using Source.Flow.Search;
 using Source.Grid;
 using Source.GUI;
-using Source.Infrastructure.Pool;
 using Source.Mark;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Zenject;
+using Cell_ = Source.Cell.Cell;
 
 namespace Source.Infrastructure.Installers
 {
@@ -18,7 +17,7 @@ namespace Source.Infrastructure.Installers
         public override void InstallBindings()
         {
             Container
-                .BindFactory<Cell.Cell, Cell.Cell.Factory>()
+                .BindFactory<Cell_, Cell_.Factory>()
                 .FromNewComponentOnNewPrefab(cellPrefab)
                 .AsTransient();
             
