@@ -42,10 +42,8 @@ namespace Source.Infrastructure.Pool
                 return null;
             }
 
-            Debug.Log(queue.Count);
             if (queue.Count == 0)
             {
-                Debug.Log("queue.Count=0");
                 if (prefab != null)
                 {
                     var instance = Object.Instantiate(prefab, parent);

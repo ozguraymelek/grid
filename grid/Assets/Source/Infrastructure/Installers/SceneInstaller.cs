@@ -11,6 +11,7 @@ using Cell_ = Source.Cell.Cell;
 
 namespace Source.Infrastructure.Installers
 {
+    [ExecuteInEditMode]
     public class SceneInstaller : MonoInstaller
     {
         [SerializeField] private GridConfig _config;
@@ -23,7 +24,8 @@ namespace Source.Infrastructure.Installers
         public override void InstallBindings()
         {
             Container.BindFactory<Cell.Cell, Cell.Cell.Factory>().FromComponentInNewPrefab(_cellPrefab);
-            Container.Bind<IGridBuilder>().To<GridController>().FromComponentOn(_grid.gameObject).AsSingle().NonLazy();
+            // Container.Bind<IGridBuilder>().To<GridController>().FromComponentOn(_grid.gameObject).AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<GridController>().FromComponentOn(_grid.gameObject).AsSingle().NonLazy();
             Container.Bind<Marker>().FromComponentInNewPrefab(_markerPrefab).AsTransient();
             // Container.Bind<MarkerSpawner>().FromComponentOn(_markerPrefab.gameObject).AsSingle();
             Container.Bind<MarkerSpawner>().FromComponentInHierarchy().AsSingle();

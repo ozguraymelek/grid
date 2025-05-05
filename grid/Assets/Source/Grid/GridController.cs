@@ -7,14 +7,17 @@ using Zenject;
 
 namespace Source.Grid
 {
-    public class GridController : MonoBehaviour, IGridBuilder
+    public class GridController : MonoBehaviour, IGridBuilder, IGridProvider
     {
         private Cell.Cell.Factory _cellFactory;
         private GridConfig _config;
         private Camera _camera;
         private Cell.Cell[,] _cells;
-
+        
         [Inject(Id = "PaddingFactor")] private readonly float _padding;
+        
+        public int MatchCount { get; set; }
+        private int _size;
         private float _lastCameraOrthoSize;
         
         [Inject]
@@ -34,17 +37,17 @@ namespace Source.Grid
         public void Generate()
         {
             Clear();
-            var size = _config.Size;
-            _cells = new Cell.Cell[size, size];
+            _size = _config.Size;
+            _cells = new Cell.Cell[_size, _size];
 
             var vertical = _camera.orthographicSize * 2;
             var horizontal = vertical * _camera.aspect;
             var square = Mathf.Min(vertical, horizontal);
-            var cellSize = square / size;
+            var cellSize = square / _size;
             var origin = Vector2.one * -square / 2;
 
-            for (var x = 0; x < size; x++)
-            for (var y = 0; y < size; y++)
+            for (var x = 0; x < _size; x++)
+            for (var y = 0; y < _size; y++)
             {
                 var worldPos = origin + new Vector2(x + 0.5f, y + 0.5f) * cellSize;
                 var cell = _cellFactory.Create();
@@ -59,6 +62,7 @@ namespace Source.Grid
         public void Clear()
         {
             if (_cells == null) return;
+            MatchCount = 0;
             foreach (var cell in _cells)
                 if (cell) Destroy(cell.gameObject);
             _cells = null;
@@ -71,6 +75,13 @@ namespace Source.Grid
                 _lastCameraOrthoSize = _camera.orthographicSize;
                 Regenerate();
             }
+        }
+
+        public Cell.Cell GetAt(int x, int y)
+        {
+            if (x < 0 || y < 0 || x >= _size || y >= _size)
+                return null;
+            return _cells[x, y];
         }
     }
 }

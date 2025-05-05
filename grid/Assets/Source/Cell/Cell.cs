@@ -9,14 +9,18 @@ using Cell_ = Source.Cell.Cell;
 
 namespace Source.Cell
 {
-    public enum InteractionStage
-    {
-        Dequeue,
-        Enqueue
-    }
+    [RequireComponent(typeof(Collider2D))]
     public class Cell : MonoBehaviour
     {
         public class Factory : PlaceholderFactory<Cell> { }
+        
+        public Vector2Int[] Neighbors => new[]
+        {
+            Vector2Int.up,
+            Vector2Int.down,
+            Vector2Int.left,
+            Vector2Int.right
+        };
         
         private Vector2Int _gridPos;
         private IMarkerService _markerService;
@@ -52,26 +56,10 @@ namespace Source.Cell
                 _markerService.RemoveMarker(this);
         }
         
-        public Cell GetNeighbor(Vector2Int dir)
-        {
-            var neighborPos = transform.position + new Vector3(dir.x, dir.y, 0);
-            var hit = Physics2D.OverlapPoint(neighborPos);
-            if (hit != null)
-            {
-                return hit.GetComponent<Cell>();
-            }
-            return null;
-        }
         public Vector2Int GridPosition => _gridPos;
+        
         public bool IsMarked => _isMarked;
+        
         public void SetMarked(bool marked) => _isMarked = marked;
-
-        public Vector2Int[] Neighbors => new[]
-        {
-            Vector2Int.up,
-            Vector2Int.down,
-            Vector2Int.left,
-            Vector2Int.right
-        };
     }
 }

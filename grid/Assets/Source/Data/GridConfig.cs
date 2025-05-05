@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Source.Data
 {
@@ -6,5 +7,23 @@ namespace Source.Data
     public class GridConfig : ScriptableObject
     {
         public int Size;
+        
+        public int MaxSizeDigit;
+        public int sizeDigit;
+        public int SizeDigit
+        {
+            get => sizeDigit;
+            set
+            {
+                if (value < Mathf.Pow(10, MaxSizeDigit - 1) || value >= Mathf.Pow(10, MaxSizeDigit))
+                {
+                    Debug.LogWarning($"Digit must be {MaxSizeDigit}-digit number");
+                    return;
+                }
+
+                sizeDigit = value;
+            }
+        }
+        
     }
 }

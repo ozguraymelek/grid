@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
+using Source.Core.Utils;
 using Source.Interfaces;
+using Zenject;
 
 namespace Source.Flow.Search
 {
@@ -9,22 +11,37 @@ namespace Source.Flow.Search
         private readonly Dictionary<Cell.Cell, Cell.Cell> _parent = new Dictionary<Cell.Cell, Cell.Cell>();
         private readonly Dictionary<Cell.Cell, int> _rank = new Dictionary<Cell.Cell, int>();
         
+        private readonly IGridProvider _provider;
+        
+        [Inject]
+        public DisjointSet(IGridProvider gridProvider)
+        {
+            _provider = gridProvider;
+
+            SLog.InjectionStatus(this,
+                (nameof(_provider), _provider)
+            );
+        }
+        
         public void Add(Cell.Cell cell)
         {
             if (_parent.ContainsKey(cell)) return;
+            
             _parent[cell] = cell;
             _rank[cell] = 0;
+            
+            var pos = cell.GridPosition;
             
             // union with existing marked neighbors
             foreach (var dir in cell.Neighbors)
             {
-                var neighbor = cell.GetNeighbor(dir);
+                var neighbor = _provider.GetAt(pos.x + dir.x, pos.y + dir.y);
                 if (neighbor != null && neighbor.IsMarked)
                     Union(cell, neighbor);
             }
         }
         
-        void Union(Cell.Cell a, Cell.Cell b)
+        private void Union(Cell.Cell a, Cell.Cell b)
         {
             var ra = Find(a);
             var rb = Find(b);
@@ -44,13 +61,12 @@ namespace Source.Flow.Search
         public IEnumerable<Cell.Cell> GetCluster(Cell.Cell cell)
         {
             var root = Find(cell);
+            
             // Snapshot keys to avoid collection modification during iteration
             var keys = _parent.Keys.ToList();
-            foreach (var c in keys)
-            {
-                if (Find(c) == root)
-                    yield return c;
-            }
+            foreach (var c in keys.Where(c => Find(c) == root))
+                yield return c;
+            // _provider.ClusterCount++;
         }
 
         public void Remove(Cell.Cell cell)
