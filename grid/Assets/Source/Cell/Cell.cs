@@ -1,6 +1,7 @@
 using Source.Core.Utils;
 using Source.Flow.Search;
 using Source.Infrastructure.Pool;
+using Source.Interfaces;
 using Source.Mark;
 using UnityEngine;
 using Zenject;
@@ -15,50 +16,40 @@ namespace Source.Cell
     }
     public class Cell : MonoBehaviour
     {
-        public class Factory : PlaceholderFactory<Cell>{}
+        public class Factory : PlaceholderFactory<Cell> { }
         
-        private DisjointGridManager _disjointGridManager;
-        private MarkerSpawner _markerSpawner;
-        
-        public bool IsMarked  = false;
-        
+        private Vector2Int _gridPos;
+        private IMarkerService _markerService;
+        private IDisjointSet _disjoint;
+        private bool _isMarked;
+        private float _cellSize;
+
         [Inject]
-        public void Construct(MarkerSpawner markerSpawner, DisjointGridManager disjointGridManager)
+        public void Construct(IMarkerService markerService, IDisjointSet disjointSet)
         {
-            _markerSpawner = markerSpawner;
-            _disjointGridManager = disjointGridManager;
+            _markerService = markerService;
+            _disjoint = disjointSet;
 
             SLog.InjectionStatus(this,
-                (nameof(_markerSpawner), _markerSpawner),
-                (nameof(_disjointGridManager), _disjointGridManager)
+                (nameof(_markerService), _markerService),
+                (nameof(_disjoint), _disjoint)
             );
         }
-        
-        private void OnMouseDown()
+
+        public void Initialize(Vector2Int gridPos, Vector2 worldPos, float scale)
         {
-            if (IsMarked == false)
-            {
-                _markerSpawner.ActiveMarker = ObjectPool<Marker>.Dequeue("Marker");
-                _markerSpawner.SetMarkedObjects(true);
-                _markerSpawner.ActiveMarker.Mark(this, 
-                    _markerSpawner.ActiveMarker);
-                Settings(InteractionStage.Dequeue);
-                _disjointGridManager.Add(this);
-                return;
-            }
-            
-            _markerSpawner.ActiveMarker.Unmark(this,
-                _markerSpawner.ActiveMarker);
-            _markerSpawner.SetMarkedObjects(false);
-            Settings(InteractionStage.Enqueue);
+            _gridPos = gridPos;
+            transform.localPosition = worldPos;
+            transform.localScale = Vector3.one * scale;
+            name = $"Cell {_gridPos.x}-{_gridPos.y}";
         }
 
-        private void Settings(InteractionStage interactionStage = InteractionStage.Dequeue)
+        private void OnMouseDown()
         {
-            _markerSpawner.ActiveMarker.transform.SetParent(interactionStage == InteractionStage.Dequeue ? transform : _markerSpawner.transform
-                , false);
-            _markerSpawner.ActiveMarker.gameObject.SetActive(interactionStage == InteractionStage.Dequeue);
-            _markerSpawner.ActiveMarker.transform.localPosition = Vector3.zero;
+            if (!_isMarked)
+                _markerService.AddMarker(this);
+            else
+                _markerService.RemoveMarker(this);
         }
         
         public Cell GetNeighbor(Vector2Int dir)
@@ -71,14 +62,16 @@ namespace Source.Cell
             }
             return null;
         }
-        
-        public void RemoveMarker()
+        public Vector2Int GridPosition => _gridPos;
+        public bool IsMarked => _isMarked;
+        public void SetMarked(bool marked) => _isMarked = marked;
+
+        public Vector2Int[] Neighbors => new[]
         {
-            if (!IsMarked) return;
-            
-            ObjectPool<Marker>.Enqueue(transform.GetChild(0).GetComponent<Marker>(), "Marker");
-            transform.GetChild(0).GetComponent<Marker>().transform.SetParent(_markerSpawner.transform, false);
-            IsMarked = false;
-        }
+            Vector2Int.up,
+            Vector2Int.down,
+            Vector2Int.left,
+            Vector2Int.right
+        };
     }
 }
