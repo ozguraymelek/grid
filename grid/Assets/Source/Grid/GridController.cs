@@ -1,4 +1,3 @@
-using System;
 using Source.Core.Utils;
 using Source.Data;
 using Source.Interfaces;
@@ -9,10 +8,10 @@ namespace Source.Grid
 {
     public class GridController : MonoBehaviour, IGridBuilder, IGridProvider
     {
-        private Cell.Cell.Factory _cellFactory;
+        private Cell.Factory _cellFactory;
         private GridConfig _config;
         private Camera _camera;
-        private Cell.Cell[,] _cells;
+        private Cell[,] _cells;
         
         [Inject(Id = "PaddingFactor")] private readonly float _padding;
         
@@ -21,7 +20,7 @@ namespace Source.Grid
         private float _lastCameraOrthoSize;
         
         [Inject]
-        public void Construct(Cell.Cell.Factory cellFactory, GridConfig config)
+        public void Construct(Cell.Factory cellFactory, GridConfig config)
         {
             _cellFactory = cellFactory;
             _config = config;
@@ -38,7 +37,7 @@ namespace Source.Grid
         {
             Clear();
             _size = _config.Size;
-            _cells = new Cell.Cell[_size, _size];
+            _cells = new Cell[_size, _size];
 
             var vertical = _camera.orthographicSize * 2;
             var horizontal = vertical * _camera.aspect;
@@ -77,7 +76,7 @@ namespace Source.Grid
             }
         }
 
-        public Cell.Cell GetAt(int x, int y)
+        public Cell GetAt(int x, int y)
         {
             if (x < 0 || y < 0 || x >= _size || y >= _size)
                 return null;

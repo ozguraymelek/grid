@@ -1,13 +1,9 @@
 using Source.Core.Utils;
-using Source.Flow.Search;
-using Source.Infrastructure.Pool;
 using Source.Interfaces;
-using Source.Mark;
 using UnityEngine;
 using Zenject;
-using Cell_ = Source.Cell.Cell;
 
-namespace Source.Cell
+namespace Source.Grid
 {
     [RequireComponent(typeof(Collider2D))]
     public class Cell : MonoBehaviour
@@ -24,19 +20,19 @@ namespace Source.Cell
         
         private Vector2Int _gridPos;
         private IMarkerService _markerService;
-        private IDisjointSet _disjoint;
+        private IClustering _clustering;
         private bool _isMarked;
         private float _cellSize;
 
         [Inject]
-        public void Construct(IMarkerService markerService, IDisjointSet disjointSet)
+        public void Construct(IMarkerService markerService, IClustering clustering)
         {
             _markerService = markerService;
-            _disjoint = disjointSet;
+            _clustering = clustering;
 
             SLog.InjectionStatus(this,
                 (nameof(_markerService), _markerService),
-                (nameof(_disjoint), _disjoint)
+                (nameof(_clustering), _clustering)
             );
         }
 

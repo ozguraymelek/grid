@@ -2,7 +2,7 @@ using Source.Data;
 using UnityEngine;
 using Zenject;
 
-namespace Source.Infrastructure.Installers
+namespace Source.Core.Infrastructure.Installers
 {
     [CreateAssetMenu(fileName = "DataInstaller", menuName = "Installers/Data")]
     public class DataInstaller : ScriptableObjectInstaller<DataInstaller>

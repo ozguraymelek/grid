@@ -1,4 +1,4 @@
-using UnityEngine;
+using Source.Grid;
 
 namespace Source.Interfaces
 {
@@ -6,6 +6,6 @@ namespace Source.Interfaces
     {
         public int MatchCount { get; set; }
         
-        Cell.Cell GetAt(int x, int y);
+        Cell GetAt(int x, int y);
     }
 }

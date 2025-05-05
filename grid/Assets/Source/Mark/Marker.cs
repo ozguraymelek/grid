@@ -1,10 +1,8 @@
-using Source.Cell;
-using Source.Infrastructure.Pool;
 using UnityEngine;
-using Cell_ = Source.Cell.Cell;
 
 namespace Source.Mark
 {
+    // this is just a reference, it has no external functionality.
     public class Marker : MonoBehaviour
     {
        

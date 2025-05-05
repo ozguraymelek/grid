@@ -1,20 +1,18 @@
 using System.Collections.Generic;
-using Source.Mark;
 using UnityEngine;
-using Zenject;
 
-namespace Source.Infrastructure.Pool
+namespace Source.Core.Infrastructure.Pool
 {
     public class ObjectPool<T> where T : Component
     {
-        private static Component prefab;
-        public static Dictionary<string, Queue<Component>> _pool = new Dictionary<string, Queue<Component>>();
+        private static T _prefab;
+        private static Dictionary<string, Queue<Component>> _pool = new Dictionary<string, Queue<Component>>();
 
         public static void Setup(T componentPrefab, int initialSize, string key, 
             Transform parent = null, bool worldPositionStays = true)
         {
             if (_pool.ContainsKey(key)) _pool.Remove(key);
-            prefab = componentPrefab;
+            _prefab = componentPrefab;
             _pool.Add(key, new Queue<Component>());
 
             for (var i = 0; i < initialSize; i++)
@@ -44,9 +42,9 @@ namespace Source.Infrastructure.Pool
 
             if (queue.Count == 0)
             {
-                if (prefab != null)
+                if (_prefab != null)
                 {
-                    var instance = Object.Instantiate(prefab, parent);
+                    var instance = Object.Instantiate(_prefab, parent);
                     instance.gameObject.SetActive(false);
                     return (T)instance;
                 }
